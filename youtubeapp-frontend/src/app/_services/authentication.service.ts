@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from "rxjs";
 import {User} from "../_models/user";
 import {map} from "rxjs/operators";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,9 @@ export class AuthenticationService {
   }
 
   login(username: string, password: string) {
-    return this.http.post<any>(`/users/authenticate`, {username, password})
+    const data = JSON.stringify({'username': username, 'password': password});
+    const config = { headers: new HttpHeaders().set('Content-Type', 'application/json') };
+    return this.http.post<any>(`http://localhost:8080/auth/signin`, data, config)
       .pipe(map(user => {
         if (user && user.token) {
           localStorage.setItem('currentUser', JSON.stringify(user));  //TODO store in HTTP-only cookie?
