@@ -2,7 +2,7 @@ export class User {
   id: number;
   username: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  country: string;
+  jobInterval: string;
   token: string;
 }
