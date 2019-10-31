@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Date;
 
 @Component
 @Slf4j
@@ -28,6 +29,7 @@ public class DataInitializer implements CommandLineRunner {
                 .password(this.passwordEncoder.encode("password"))
                 .country("GE")
                 .jobInterval(50L)
+                .nextRunDate(new Date(new Date().getTime()+50L))
                 .roles(Arrays.asList("ROLE_USER"))
                 .build()
         );
@@ -37,6 +39,7 @@ public class DataInitializer implements CommandLineRunner {
                 .password(this.passwordEncoder.encode("password"))
                 .country("GE")
                 .jobInterval(50L)
+                .nextRunDate(new Date(new Date().getTime()+50L))
                 .roles(Arrays.asList("ROLE_USER", "ROLE_ADMIN"))
                 .build()
         );

@@ -15,6 +15,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -38,6 +39,10 @@ public class User implements UserDetails {
 
     @NotEmpty
     private String country;
+
+    @NotNull
+    private Date nextRunDate;
+
 
     @NotNull
     @Min(1)

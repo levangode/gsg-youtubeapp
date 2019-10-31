@@ -12,10 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 import static org.springframework.http.ResponseEntity.badRequest;
@@ -33,34 +30,35 @@ public class UserinfoController {
     private PasswordEncoder passwordEncoder;
 
 
-	@GetMapping("/me")
-    public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails){
+    @GetMapping("/me")
+    public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails) {
         Map<Object, Object> model = new HashMap<>();
         model.put("username", userDetails.getUsername());
         model.put("roles", userDetails.getAuthorities()
-            .stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(toList())
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(toList())
         );
         return ok(model);
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegistrationRequest registrationRequest){
-	    try {
-	        if(this.users.findByUsername(registrationRequest.getUsername()).isPresent()){
-	            return badRequest().body("Username Already Exists");
+    public ResponseEntity register(@RequestBody RegistrationRequest registrationRequest) {
+        try {
+            if (this.users.findByUsername(registrationRequest.getUsername()).isPresent()) {
+                return badRequest().body("Username Already Exists");
             }
             this.users.save(User.builder()
                     .username(registrationRequest.getUsername())
                     .password(this.passwordEncoder.encode(registrationRequest.getPassword()))
                     .country(registrationRequest.getCountry())
                     .jobInterval(registrationRequest.getJobInterval())
+                    .nextRunDate(new Date(new Date().getTime() + registrationRequest.getJobInterval()))
                     .roles(Collections.singletonList("ROLE_USER"))
                     .build()
             );
             return ok().build();
-        } catch (Exception e){
+        } catch (Exception e) {
             return badRequest().build();
         }
     }
