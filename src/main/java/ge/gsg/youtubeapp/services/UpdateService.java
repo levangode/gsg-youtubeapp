@@ -44,18 +44,26 @@ public class UpdateService {
     }
 
     public void updateUsers() {
-        log.info("Updating user videos and comments");
-        this.users.findAll().forEach(this::updateUser);
+        log.info("Updating users");
+        this.users.findAll().forEach(user -> {
+            try {
+                if (user.getNextRunDate().compareTo(new Date()) < 0) {
+                    updateUser(user);
+                }
+            } catch (Exception e) {
+                log.error("Error while updating user");
+            }
+        });
     }
 
-    public void updateUser(User user){
+    public void updateUser(User user) {
         log.info("Updating user {}", user.getUsername());
         try {
             String topVideoId = getVideo(user.getCountry());
             String topComment = getComment(topVideoId);
             user.setTopVideo(topVideoId);
             user.setTopComment(topComment);
-            user.setNextRunDate(new Date(user.getNextRunDate().getTime() + user.getJobInterval() * 60000));
+            user.setNextRunDate(new Date((user.getNextRunDate() == null ? new Date().getTime() : user.getNextRunDate().getTime()) + user.getJobInterval() * 60000));
             users.save(user);
         } catch (Exception e) {
             log.error("Error in updating user");

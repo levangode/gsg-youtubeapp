@@ -69,7 +69,6 @@ public class UserinfoController {
                     .password(this.passwordEncoder.encode(registrationRequest.getPassword()))
                     .country(registrationRequest.getCountry())
                     .jobInterval(registrationRequest.getJobInterval())
-                    .nextRunDate(new Date(new Date().getTime() + registrationRequest.getJobInterval() * 1000))
                     .roles(Collections.singletonList("ROLE_USER"))
                     .build();
             updateService.updateUser(user);
