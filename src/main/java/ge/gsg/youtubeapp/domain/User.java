@@ -45,6 +45,8 @@ public class User implements UserDetails {
 
     private String topVideo;
 
+    private String topComment;
+
     @NotNull
     @Min(1)
     @Max(60)

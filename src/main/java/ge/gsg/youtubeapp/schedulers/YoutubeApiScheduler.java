@@ -16,7 +16,8 @@ import java.util.Date;
 @Slf4j
 public class YoutubeApiScheduler {
 
-    private String url = "https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=%s&key=AIzaSyBZrUkg0xCovguJNRvXY-fu2Td-i1dxZqg";
+    private String topVideosUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=%s&key=AIzaSyBZrUkg0xCovguJNRvXY-fu2Td-i1dxZqg";
+    private String topCommentsUrl = "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=%s&order=relevance&key=AIzaSyBZrUkg0xCovguJNRvXY-fu2Td-i1dxZqg";
 
     private RestTemplate youtubeApi = new RestTemplate();
     private final UserRepository users;
@@ -32,16 +33,19 @@ public class YoutubeApiScheduler {
         this.users.findAll().forEach(user -> {
             ResponseEntity<String> response = null;
             try {
-                response = youtubeApi.getForEntity(String.format(url, user.getCountry()), String.class);
+                response = youtubeApi.getForEntity(String.format(topVideosUrl, user.getCountry()), String.class);
             } catch (Exception e){
                 log.error("Error accessing youtube api");
             }
-            JsonNode root = null;
+            JsonNode root;
             try {
                 root = mapper.readTree(response.getBody());
-                String topVideoTitle = root.path("items").get(0).path("snippet").path("title").asText();
                 String topVideoId = root.path("items").get(0).path("id").textValue();
                 user.setTopVideo(topVideoId);
+                response = youtubeApi.getForEntity(String.format(topCommentsUrl, topVideoId), String.class);
+                root = mapper.readTree(response.getBody());
+                String topComment = root.path("items").get(0).path("snippet").path("topLevelComment").path("snippet").path("textDisplay").textValue();
+                user.setTopComment(topComment);
             } catch (JsonProcessingException e) {
                 log.error("Response Body Empty");
             }

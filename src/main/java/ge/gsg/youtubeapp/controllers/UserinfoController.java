@@ -2,6 +2,7 @@ package ge.gsg.youtubeapp.controllers;
 
 import ge.gsg.youtubeapp.domain.User;
 import ge.gsg.youtubeapp.models.RegistrationRequest;
+import ge.gsg.youtubeapp.models.UpdateParamsRequest;
 import ge.gsg.youtubeapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,8 +39,13 @@ public class UserinfoController {
                 .map(GrantedAuthority::getAuthority)
                 .collect(toList())
         );
-        users.findByUsername(userDetails.getUsername()).ifPresent(user -> model.put("jobInterval", user.getJobInterval()));
-        users.findByUsername(userDetails.getUsername()).ifPresent(user -> model.put("topVideo", user.getTopVideo()));
+        Optional<User> userOptional = users.findByUsername(userDetails.getUsername());
+        userOptional.ifPresent(user -> {
+            model.put("jobInterval", user.getJobInterval());
+            model.put("topVideo", user.getTopVideo());
+            model.put("country", user.getCountry());
+            model.put("topComment", user.getTopComment());
+        });
         return ok(model);
     }
 
@@ -60,6 +66,26 @@ public class UserinfoController {
                     .build()
             );
             return ok().build();
+        } catch (Exception e) {
+            return badRequest().build();
+        }
+    }
+
+    @CrossOrigin
+    @PostMapping("/update")
+    public ResponseEntity update(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UpdateParamsRequest updateParamsRequest) {
+        try {
+            Optional<User> userOptional = users.findByUsername(userDetails.getUsername());
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                user.setJobInterval(updateParamsRequest.getJobInterval());
+                user.setCountry(updateParamsRequest.getCountry());
+                user.setNextRunDate(new Date(new Date().getTime() + updateParamsRequest.getJobInterval()));
+                users.save(user);
+                return ok().build();
+            } else {
+                return badRequest().body("User not found");
+            }
         } catch (Exception e) {
             return badRequest().build();
         }
