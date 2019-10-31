@@ -19,7 +19,6 @@ import static org.springframework.http.ResponseEntity.badRequest;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/users")
 public class UserinfoController {
 
@@ -29,7 +28,7 @@ public class UserinfoController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
+    @CrossOrigin
     @GetMapping("/me")
     public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails) {
         Map<Object, Object> model = new HashMap<>();
@@ -39,9 +38,12 @@ public class UserinfoController {
                 .map(GrantedAuthority::getAuthority)
                 .collect(toList())
         );
+        users.findByUsername(userDetails.getUsername()).ifPresent(user -> model.put("jobInterval", user.getJobInterval()));
+        users.findByUsername(userDetails.getUsername()).ifPresent(user -> model.put("topVideo", user.getTopVideo()));
         return ok(model);
     }
 
+    @CrossOrigin
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegistrationRequest registrationRequest) {
         try {

@@ -25,21 +25,28 @@ public class YoutubeApiScheduler {
         this.users = users;
     }
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 10000)
     public void updateUsers() {
         log.info("Scheduler triggered");
         ObjectMapper mapper = new ObjectMapper();
         this.users.findAll().forEach(user -> {
-            ResponseEntity<String> response = youtubeApi.getForEntity(String.format(url, user.getCountry()), String.class);
+            ResponseEntity<String> response = null;
+            try {
+                response = youtubeApi.getForEntity(String.format(url, user.getCountry()), String.class);
+            } catch (Exception e){
+                log.error("Error accessing youtube api");
+            }
             JsonNode root = null;
             try {
                 root = mapper.readTree(response.getBody());
                 String topVideoTitle = root.path("items").get(0).path("snippet").path("title").asText();
+                String topVideoId = root.path("items").get(0).path("id").textValue();
+                user.setTopVideo(topVideoId);
             } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                log.error("Response Body Empty");
             }
 
-            log.info(response.getBody());
+//            log.info(response.getBody());
 //            if(user.getNextRunDate().compareTo(currentDate) > 0){
 //                youtubeApi.exchange(url, HttpMethod.GET);
 //            }

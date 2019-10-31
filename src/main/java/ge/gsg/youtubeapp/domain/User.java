@@ -43,6 +43,7 @@ public class User implements UserDetails {
     @NotNull
     private Date nextRunDate;
 
+    private String topVideo;
 
     @NotNull
     @Min(1)

@@ -15,4 +15,8 @@ export class UserService {
     const config = { headers: new HttpHeaders().set('Content-Type', 'application/json') };
     return this.http.post(`http://localhost:8080/users/register`, data, config);
   }
+
+  getVideoId() {
+    return this.http.get(`http://localhost:8080/users/me`);
+  }
 }
