@@ -5,7 +5,9 @@ import ge.gsg.youtubeapp.models.AuthenticationRequest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,8 +37,18 @@ public class IntegrationTests {
                 .contentType(ContentType.JSON)
                 .body(AuthenticationRequest.builder().username("user").password("password").build())
                 .when().post("/auth/signin")
-                .andReturn().jsonPath().getString("token");
-//        log.debug("Got token:" + token);
-        System.out.println(token);
+                .andReturn().jsonPath().getString("token"); //TODO log
+    }
+
+    @Test
+    public void getUserInfoWithoutAuth() {
+        given().accept(ContentType.JSON).when().get("/users/me")
+                .then().assertThat().statusCode(HttpStatus.SC_FORBIDDEN);
+    }
+
+    @Test
+    public void getUserInfoWithAuth() {
+        given().header("Authorization", "Bearer " + token).accept(ContentType.JSON).when().get("/users/me")
+                .then().assertThat().statusCode(HttpStatus.SC_OK);
     }
 }
