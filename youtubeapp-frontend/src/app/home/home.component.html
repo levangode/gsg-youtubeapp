@@ -2,7 +2,7 @@
 <form [formGroup]="updateForm" (ngSubmit)="onSubmit()">
 
   <div class="form-group">
-    <label for="country">Country</label>
+    <label for="country">Country (in <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" >ISO 3166-1 alpha-2 country code</a>)</label>
     <input type="text" id="country" formControlName="country" class="form-control"
            [ngClass]="{ 'is-invalid': submitted && form.country.errors }"/>
     <div *ngIf="submitted && form.country.errors" class="invalid-feedback">
