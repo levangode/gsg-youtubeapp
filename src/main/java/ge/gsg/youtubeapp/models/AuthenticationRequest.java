@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -13,6 +15,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class AuthenticationRequest implements Serializable {
 	private static final long serialVersionUID = -6986746375915710855L;
+	@NotEmpty
 	private String username;
-    private String password;
+	@NotEmpty
+	private String password;
 }

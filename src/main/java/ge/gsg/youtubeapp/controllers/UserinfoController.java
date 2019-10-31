@@ -4,6 +4,7 @@ import ge.gsg.youtubeapp.domain.User;
 import ge.gsg.youtubeapp.models.RegistrationRequest;
 import ge.gsg.youtubeapp.models.UpdateParamsRequest;
 import ge.gsg.youtubeapp.repository.UserRepository;
+import ge.gsg.youtubeapp.services.UpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -23,11 +25,17 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/users")
 public class UserinfoController {
 
-    @Autowired
-    private UserRepository users;
+    private final UserRepository users;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
+
+    private final UpdateService updateService;
+
+    public UserinfoController(UserRepository users, PasswordEncoder passwordEncoder, UpdateService updateService) {
+        this.users = users;
+        this.passwordEncoder = passwordEncoder;
+        this.updateService = updateService;
+    }
 
     @CrossOrigin
     @GetMapping("/me")
@@ -51,20 +59,20 @@ public class UserinfoController {
 
     @CrossOrigin
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegistrationRequest registrationRequest) {
+    public ResponseEntity register(@Valid @RequestBody RegistrationRequest registrationRequest) {
         try {
             if (this.users.findByUsername(registrationRequest.getUsername()).isPresent()) {
                 return badRequest().body("Username Already Exists");
             }
-            this.users.save(User.builder()
+            User user = User.builder()
                     .username(registrationRequest.getUsername())
                     .password(this.passwordEncoder.encode(registrationRequest.getPassword()))
                     .country(registrationRequest.getCountry())
                     .jobInterval(registrationRequest.getJobInterval())
-                    .nextRunDate(new Date(new Date().getTime() + registrationRequest.getJobInterval()))
+                    .nextRunDate(new Date(new Date().getTime() + registrationRequest.getJobInterval() * 1000))
                     .roles(Collections.singletonList("ROLE_USER"))
-                    .build()
-            );
+                    .build();
+            updateService.updateUser(user);
             return ok().build();
         } catch (Exception e) {
             return badRequest().build();
