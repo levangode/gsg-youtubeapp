@@ -40,4 +40,4 @@ User registration fields are validated both on the client and the backend side.
 
 *> Country list is not implemented and user has to manually enter the country name with ISO standards*
 
-*> Database records are not persisted to file so DB is created on every run. Although this can be changed by defining application.properties for `spring.datasource.url` & `spring.jpa.hibernate.ddl-auto`
+*> Database records are not persisted to file so DB is created on every run. Although this can be changed by defining application.properties for `spring.datasource.url` & `spring.jpa.hibernate.ddl-auto`*
