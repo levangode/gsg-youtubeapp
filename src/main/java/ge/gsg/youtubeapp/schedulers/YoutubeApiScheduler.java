@@ -18,7 +18,7 @@ public class YoutubeApiScheduler {
     /**
      * Check is performed for all users every 1 minute
      */
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(cron = "0 * * * * *")
     public void updateUsers() {
         updateService.updateUsers();
     }

@@ -19,6 +19,7 @@ public class UpdateService {
     private final UserRepository users;
     private static final String topVideosUrl = "https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=%s&key=AIzaSyBZrUkg0xCovguJNRvXY-fu2Td-i1dxZqg";
     private static final String topCommentsUrl = "https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=%s&order=relevance&key=AIzaSyBZrUkg0xCovguJNRvXY-fu2Td-i1dxZqg";
+    //TODO extract to properties
 
     private ObjectMapper mapper = new ObjectMapper();
     private RestTemplate youtubeApi = new RestTemplate();

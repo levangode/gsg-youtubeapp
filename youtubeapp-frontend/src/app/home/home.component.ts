@@ -47,12 +47,12 @@ export class HomeComponent implements OnInit {
       jobInterval: ['', [Validators.required, Validators.min(1), Validators.max(60)]]
     });
 
+    this.userService.getUser().subscribe(value => {
+      this.form['country'].setValue(value['country']);
+      this.form['jobInterval'].setValue(value['jobInterval']);
+    });
 
     interval(1000).subscribe(value => {
-      this.userService.getUser().subscribe(value => {
-        this.form['country'].setValue(value['country']);
-        this.form['jobInterval'].setValue(value['jobInterval']);
-      });
       this.userService.getUser().subscribe(value => {
         let videoId = value['topVideo'];
         let comment = value['topComment'];

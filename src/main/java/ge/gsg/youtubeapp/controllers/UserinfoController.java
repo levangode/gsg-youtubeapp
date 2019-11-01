@@ -80,7 +80,7 @@ public class UserinfoController {
 
     @CrossOrigin
     @PostMapping("/update")
-    public ResponseEntity update(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UpdateParamsRequest updateParamsRequest) {
+    public ResponseEntity update(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody UpdateParamsRequest updateParamsRequest) {
         try {
             Optional<User> userOptional = users.findByUsername(userDetails.getUsername());
             if (userOptional.isPresent()) {
