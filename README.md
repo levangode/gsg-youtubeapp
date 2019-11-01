@@ -1,6 +1,6 @@
 # Prerequisites
-1) npm: '6.9.0'
-2) @angular/cli 8.3.15
+1) npm: '6.9.0'  or similar
+2) @angular/cli 8.3.15   or similar
 3) JDK 8
 
 # Run instructions
